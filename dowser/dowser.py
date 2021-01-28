@@ -26,6 +26,7 @@ from PIL import Image
 from PIL import ImageDraw
 
 import cherrypy
+import html
 
 from dowser import reftree
 from cherrypy import tools
@@ -35,7 +36,7 @@ localDir = os.path.dirname(
 
 
 def get_repr(obj, limit=250):
-    return cgi.escape(reftree.get_repr(obj, limit))
+    return html.escape((reftree.get_repr(obj, limit))
 
 
 class _(object):
@@ -129,7 +130,7 @@ class Root:
                 row = ('<div class="typecount">%s<br />'
                        '<img class="chart" src="%s" /><br />'
                        'Min: %s Cur: %s Max: %s <a href="%s">TRACE</a></div>'
-                       % (cgi.escape(typename),
+                       % (html.escape(typename),
                           url("chart/%s" % typename),
                           min(hist), hist[-1], maxhist,
                           url("trace/%s" % typename),
@@ -167,7 +168,7 @@ class Root:
             rows = self.trace_one(typename, objid)
 
         return template("trace.html", output="\n".join(rows),
-                        typename=cgi.escape(typename),
+                        typename=html.escape(typename),
                         objid=str(objid or ''))
     trace.exposed = True
 
@@ -255,7 +256,7 @@ class Root:
             rows = ["<h3>The object you requested was not found.</h3>"]
 
         params = {'output': "\n".join(rows),
-                  'typename': cgi.escape(typename),
+                  'typename': html.escape(typename),
                   'objid': str(objid),
                   }
         return template("tree.html", **params)
